@@ -64,7 +64,6 @@ end
 -- ask the user for input and returns it
 function functions.askUser(question)
 	local question = quesiton or ""
-	--print(quesiton)
 	return io.read()
 end
 
