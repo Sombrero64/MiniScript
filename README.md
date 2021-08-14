@@ -1,5 +1,5 @@
 # MiniScript
-**MiniScript** is a very small and basic language, featuring 32 commands and list support. However, MiniScript does not support control flow, so, you are at the mercy of the messy `goto` and `goif` functions for conditional statements, looping, and procedures. The sytnax is pretty basic (the "parser" is written under 31 lines):
+**MiniScript** is a very small and basic language, featuring 31 commands and list support. However, MiniScript does not support control flow, so, you are at the mercy of the messy `goto` and `goif` functions for conditional statements, looping, and procedures. The sytnax is pretty basic (the "parser" is written under 31 lines):
 
 1. Entries are sperated by spaces, which be prevented by using quotes.
 2. The first entry is the command's name, and the rest are inputs.
