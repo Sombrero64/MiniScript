@@ -338,7 +338,7 @@ commands = {
 	
 	-- print string
 	["print"] = function(args)
-		print(unpack(args))
+		print(table.unpack(args))
 	end,
 	
 	-- ask return
