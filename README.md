@@ -6,7 +6,7 @@
 3. To get a variable's value, you write a dollar sign (`$`), then the name like `$foo`.
 4. Comments uses number sign (`#`), and it must be at the beginning of the line.
 
-Ever scene I got started programming, I wanted my own language. I only made this to improve my interpreter programming skills, and this is my first interpreter I ever wrote for an actual language. You can learn MiniScript on [every command available](https://github.com/Sombrero64/MiniScript/blob/main/guides/commands.md), or [how to edit MiniScript to add more commands](https://github.com/Sombrero64/MiniScript/blob/main/guides/editing.md).
+Ever scene I got started programming, I wanted my own language. I only made this to improve my interpreter programming skills, and this is my first interpreter I ever wrote for an actual language. You can learn MiniScript on [every command available](https://github.com/Sombrero64/MiniScript/blob/main/guides/commands.md).
 
 ```
 print "Hello, world!"
