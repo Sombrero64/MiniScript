@@ -1,5 +1,5 @@
 # MiniScript
-**MiniScript** is a very small and basic language, featuring 31 commands and basic list support. However, MiniScript does not support structured programming, so, you are at the mercy of the `goto` and `goif` commands. The sytnax is pretty basic (the "parser" is written under 31 lines):
+**MiniScript** is a very small and basic language, featuring 31 commands and basic list support. The sytnax is pretty basic:
 
 1. Entries are sperated by spaces, which be prevented by using quotes.
 2. The first entry is the command's name, and the rest are inputs.
