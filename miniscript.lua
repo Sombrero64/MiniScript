@@ -454,7 +454,7 @@ commands = {
 					call(name, args)
 					index = index + 1
 				end
-				index = previous + 1
+				index = previous
 			end
 		end
 	end,
