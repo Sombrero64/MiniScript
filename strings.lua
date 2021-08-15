@@ -43,13 +43,13 @@ strings.help = {
 }
 
 strings.about = {
-	"MiniScript Version 2.1",
+	"MiniScript Version 1.1",
 	"MiniScript is a basic and small programming language.",
 	"Licensed under the MIT license, created by Daniel Lawson."
 }
 
 strings.start = {
-	"MiniScript Version 2.1",
+	"MiniScript Version 1.1",
 	"Use the run command to run a script.",
 	"Use the help command for more info on each command."
 }
