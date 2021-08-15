@@ -37,7 +37,7 @@ strings.help = {
 	["run"] = {"run path", "runs a new program, stops current script"},
 	["reset"] = {"reset", "removes all variables, lists, and procedures"},
 	["parse"] = {"parse line", "parses and runs the string as code"},
-	["define"] = {"define name ~ inputs", "defines a new proceure, storing code and inputs"},
+	["define"] = {"define name ~ inputs", "defines a new proceure, stores code until the end keyword"},
 	["call"] = {"call name ...", "run a proceure"},
 	["if"] = {"if truth if_line ~ else_line", "runs either IF or ELSE depending on the boolean value"},
 }
