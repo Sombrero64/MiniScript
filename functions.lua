@@ -58,4 +58,11 @@ function functions.printTable(list, showIndexes)
 	end
 end
 
+-- manage outputs and arguments
+function functions.firstOfTable(args)
+	local output = args[1]
+	table.remove(args, 1)
+	return output, args
+end
+
 return functions
