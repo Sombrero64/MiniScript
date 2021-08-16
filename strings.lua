@@ -29,6 +29,7 @@ strings.help = {
 	["goto"] = {"goto line", "sets the line number"},
 	["step"] = {"step count", "changes the line number"},
 	["goif"] = {"goif truth if else", "changes the line number to either IF or ELSE depending the boolean value"},
+	["label"] = {"label name ~ line", "creates a new label at the command's line number or a requested line number"},
 	["check"] = {"check output if else", "returns either IF or ELSE depending on the boolean value"},
 	["print"] = {"print ...", "displays strings to the console"},
 	["ask"] = {"ask output", "asks the user then returns the anwser"},
@@ -43,13 +44,13 @@ strings.help = {
 }
 
 strings.about = {
-	"MiniScript Version 1.1",
+	"MiniScript Version 1.2",
 	"MiniScript is a basic and small programming language.",
 	"Licensed under the MIT license, created by Daniel Lawson."
 }
 
 strings.start = {
-	"MiniScript Version 1.1",
+	"MiniScript Version 1.2",
 	"Use the run command to run a script.",
 	"Use the help command for more info on each command."
 }
