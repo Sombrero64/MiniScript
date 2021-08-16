@@ -1,10 +1,11 @@
 # MiniScript
-**MiniScript** is a small and basic language, featuring 39 commands and basic list and procedure support. The sytnax is pretty basic:
+**MiniScript** is a small and basic language, featuring 40 commands and basic list and procedure support. The sytnax is pretty basic:
 
-1. Entries are sperated by spaces, which be prevented by using quotes.
-2. The first entry is the command's name, and the rest are inputs.
-3. To get a variable's value, you write a dollar sign (`$`), then the name like `$foo`.
-4. Comments uses number sign (`#`), and it must be at the beginning of the line.
+1. Entries are sperated by spaces, which be prevented by using quotes (`"`) or apostrophes (`'`).
+2. When using either quotes or apostrophes, you must use their respective character to close the string. In other words, quotes closes quotes, and apostrophes closes apostrophes.
+3. The first entry is the command's name, and the rest are inputs.
+4. To get a variable's value, you write a dollar sign (`$`), then the name like `$foo`.
+5. Comments uses number sign (`#`), and it must be at the beginning of the line.
 
 Ever scene I got started programming, I wanted my own language. I only made this to improve my interpreter programming skills, and this is my first interpreter I ever wrote for an actual language. You can learn MiniScript on [every command available](https://github.com/Sombrero64/MiniScript/blob/main/guides/commands.md).
 
