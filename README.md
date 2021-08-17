@@ -1,4 +1,7 @@
-# MiniScript
+<div align="center">
+        <img width="345" src="docs/logo.png" alt="RazerFlare">
+</div>
+
 **MiniScript** is a small and basic language, featuring 39 commands and basic list and procedure support. The sytnax is pretty basic:
 
 1. Entries are separated by spaces, which be prevented by using quotes (`"`) or apostrophes (`'`).
