@@ -1,7 +1,8 @@
 local strings = {}
 
 strings.help = {
-	["set"] = {"set name value", "sets the value of a variable"},
+	["set"] = {"set name ~ value", "sets the value of a variable"},
+	["change"] = {"change name ~ value", "increases or decreases the value of a variable"},
 	["delete"] = {"delete variable/list/procedure name", "deletes a variable, list, or procedure"},
 	["list"] = {"list name ...", "sets the items in a list"},
 	["insert"] = {"insert list value ~ index", "adds a new item at the end or a specified index in a list"},
@@ -43,13 +44,13 @@ strings.help = {
 }
 
 strings.about = {
-	"MiniScript Version 1.3",
+	"MiniScript Version 1.4",
 	"MiniScript is a basic and small programming language.",
 	"Licensed under the MIT license, created by Daniel Lawson."
 }
 
 strings.start = {
-	"MiniScript Version 1.3",
+	"MiniScript Version 1.4",
 	"Use the run command to run a script.",
 	"Use the help command for more info on each command."
 }
