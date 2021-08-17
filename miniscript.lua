@@ -205,8 +205,8 @@ commands = {
 		end)
 	end,
 
-	-- remainer return ...
-	["remainer"] = function(args)
+	-- remainder return ...
+	["remainder"] = function(args)
 		combine(args, function(out, number)
 			local number = tonumber(number)
 			return out % number
@@ -314,11 +314,19 @@ commands = {
 
 	-- order return ...
 	["order"] = function(args)
-		combine(args, function(out, value)
-			local outNum, valueNum = tonumber(out), tonumber(value)
-			local stateNum = outNum ~= nil and valueNum ~= nil
-			return stateNum and (outNum > valueNum) or (out > value)
-		end)
+		local output, args = functions.firstOfTable(args)
+		local statement = false
+		if output ~= nil then
+			local previous = args[1] or ""
+			previous = tonumber(previous) or previous
+			table.remove(args, 1)
+			for _, item in ipairs(args) do
+				local item = tonumber(item) or item
+				statement = previous > item
+				previous = tonumber(item) or item
+			end
+			data.variables[output] = tostring(statement)
+		end
 	end,
 
 	-- goto line
@@ -326,14 +334,6 @@ commands = {
 		local line = tonumber(args[1]) or data.labels[args[1]]
 		if line ~= nil then
 			index = line - 1
-		end
-	end,
-	
-	-- step line
-	["step"] = function(args)
-		local count = tonumber(args[1])
-		if line ~= nil then
-			index = index + (line - 1)
 		end
 	end,
 
@@ -378,7 +378,7 @@ commands = {
 	["ask"] = function(args)
 		local output = args[1]
 		if output ~= nil then
-			local anwser = functions.askUser()
+			local anwser = io.read() or ""
 			data.variables[output] = anwser
 		end
 	end,
@@ -493,7 +493,7 @@ commands = {
 -- interpreter loop
 functions.printTable(strings.start, false)
 while true do
-	local command = functions.askUser() or ""
+	local command = io.read() or ""
 	local name, args = parse(command)
 	call(name, args)
 end
