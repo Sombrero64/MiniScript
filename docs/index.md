@@ -8,7 +8,7 @@
   <a href="https://discord.gg/BSe84YHgRx">Discord Server</a> )
 </p>
 
-**MiniScript** is a small and basic language, featuring 39 commands and basic list and procedure support. The sytnax is pretty basic:
+**MiniScript** is a small and basic language, featuring 40 commands and basic list and procedure support. The sytnax is pretty basic:
 
 1. Entries are separated by spaces, which be prevented by using quotes (`"`) or apostrophes (`'`).
 2. When using either quotes or apostrophes, you must use their respective character to close the string. In other words, quotes closes quotes, and apostrophes closes apostrophes.
