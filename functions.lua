@@ -5,11 +5,6 @@ function functions.round(number)
 	return number >= 0 and math.floor(number + 0.5) or math.ceil(number - 0.5)
 end
 
--- checks if a number is an integer
-function functions.isInteger(number)
-	return math.floor(number) == number
-end
-
 -- random float number
 function functions.randomFloat(min, max)
 	return min + math.random() * (max - min);
@@ -30,21 +25,6 @@ function functions.readFile(file)
 		lines[#lines + 1] = line
 	end
 	return lines
-end
-
--- ask the user for input and returns it
-function functions.askUser(question)
-	local question = quesiton or ""
-	return io.read()
-end
-
--- run code only if in interpreter
-function functions.interpreterCommand(args, code)
-	if inInterpreter then
-		code()
-	else
-		print("This command can only be used in the interpreter!")
-	end
 end
 
 -- print the items from a table
