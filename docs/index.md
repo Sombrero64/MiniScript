@@ -11,8 +11,6 @@
 5. The dollar sign must be at the beginning of the entry in order to call a variable.
 6. Comments uses number sign (`#`), and it must be at the beginning of the line.
 
-Ever scene I got started programming, I wanted my own language. I only made this to improve my interpreter programming skills, and this is my first interpreter I ever wrote for an actual language.
-
 ```
 set number 0
 
@@ -36,8 +34,3 @@ equal repeat $number 100
 not repeat $repeat
 goif $repeat 3
 ```
-
-Just download the contents of the repository and run `miniscript.lua` in a Lua interpreter. You don't need to instail any other external library. Here's some commands to know before you start.
-
-* Type `run` with the path to your script to load it.
-* Type `help` to provide information on a command (write the name next to it), or list all available commands.
