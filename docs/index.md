@@ -2,6 +2,12 @@
         <img width="500" src="logo.png" alt="RazerFlare">
 </div>
 
+<p align="center">
+  ( <a href="https://github.com/Sombrero64/MiniScript/releases">Releases</a> -
+  <a href="https://github.com/Sombrero64/MiniScript/blob/main/guide.pdf">Guide</a> -
+  <a href="https://discord.gg/BSe84YHgRx">Discord Server</a> )
+</p>
+
 **MiniScript** is a small and basic language, featuring 39 commands and basic list and procedure support. The sytnax is pretty basic:
 
 1. Entries are separated by spaces, which be prevented by using quotes (`"`) or apostrophes (`'`).
