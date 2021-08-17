@@ -17,7 +17,8 @@ local strings = require("strings")
 
 -- generate name and arguments with line
 local function parse(line)
-	-- check if comments
+	-- remove tabs then check if not a comment
+	line = string.gsub(line, "\t", "")
 	if string.sub(line, 1, 1) ~= "#" then
 		local entries = {""}
 		local inString = false
@@ -51,7 +52,8 @@ local function parse(line)
 				entries[index] = (variable ~= nil and variable or "")
 			end
 		end
-
+		
+		-- get name
 		local name = entries[1]
 		table.remove(entries, 1)
 		return name, entries
@@ -87,6 +89,15 @@ commands = {
 		local value = args[2] or ""
 		if name ~= nil then
 			data.variables[name] = value
+		end
+	end,
+	
+	-- change variable value
+	["change"] = function(args)
+		local name = args[1]
+		local value = tonumber(args[2]) or 0
+		if name ~= nil then
+			data.variables[name] = data.variables[name] + value
 		end
 	end,
 
@@ -443,11 +454,11 @@ commands = {
 	["define"] = function(args)
 		local name, inputs = args[1], args[2]
 		if name ~= nil then
-			local line = ""
-			local block = {}
+			local line, block = "", {}
 			repeat
 				index = index + 1
-				line = program[index]
+				line = program[index] or ""
+				line = string.gsub(line, "\t", "")
 				table.insert(block, line)
 			until string.sub(line, 1, 3) == "end"
 			data.procedures[name] = {block, args[2]}
@@ -467,7 +478,8 @@ commands = {
 				end
 				local previous = index
 				index = 1
-				for _, line in ipairs(code) do
+				while index <= #code do
+					local line = code[index]
 					local name, args = parse(line)
 					call(name, args)
 					index = index + 1
