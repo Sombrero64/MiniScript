@@ -14,7 +14,7 @@ strings.help = {
 	["subtract"] = {"subtract output ...", "returns the difference of all inputs"},
 	["multiply"] = {"multiply output ...", "returns the product of all inputs"},
 	["divide"] = {"divide output ...", "returns the quotient of all inputs"},
-	["remainer"] = {"remainer output ...", "returns the remainer of all inputs"},
+	["remainder"] = {"remainder output ...", "returns the remainder of all inputs"},
 	["round"] = {"round output number ~ force", "rounds the number depending on the value, or only up or down"},
 	["random"] = {"random output min max", "generates a random number bewteen two numbers"},
 	["absolute"] = {"absolute output number", "returns the absolute value of the number"},
@@ -27,7 +27,6 @@ strings.help = {
 	["equal"] = {"equal output ...", "returns true if all values are equal"},
 	["order"] = {"order output ...", "returns true if the values are correctly ordered from greatest to smallest"},
 	["goto"] = {"goto line", "sets the line number"},
-	["step"] = {"step count", "changes the line number"},
 	["goif"] = {"goif truth if else", "changes the line number to either IF or ELSE depending the boolean value"},
 	["label"] = {"label name ~ line", "creates a new label at the command's line number or a requested line number"},
 	["check"] = {"check output if else", "returns either IF or ELSE depending on the boolean value"},
@@ -44,13 +43,13 @@ strings.help = {
 }
 
 strings.about = {
-	"MiniScript Version 1.2",
+	"MiniScript Version 1.3",
 	"MiniScript is a basic and small programming language.",
 	"Licensed under the MIT license, created by Daniel Lawson."
 }
 
 strings.start = {
-	"MiniScript Version 1.2",
+	"MiniScript Version 1.3",
 	"Use the run command to run a script.",
 	"Use the help command for more info on each command."
 }
