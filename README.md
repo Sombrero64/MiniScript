@@ -8,7 +8,7 @@
 5. The dollar sign must be at the beginning of the entry in order to call a variable.
 6. Comments uses number sign (`#`), and it must be at the beginning of the line.
 
-Ever scene I got started programming, I wanted my own language. I only made this to improve my interpreter programming skills, and this is my first interpreter I ever wrote for an actual language. You can learn MiniScript on [every command available](https://github.com/Sombrero64/MiniScript/blob/main/guides/commands.md).
+Ever scene I got started programming, I wanted my own language. I only made this to improve my interpreter programming skills, and this is my first interpreter I ever wrote for an actual language.
 
 ```
 set number 0
