@@ -1,6 +1,13 @@
 <div align="center">
-        <img width="345" src="docs/logo.png" alt="RazerFlare">
+        <img width="500" src="docs/logo.png" alt="RazerFlare">
 </div>
+
+<p align="center">
+  ( <a href="https://github.com/Sombrero64/MiniScript/releases">Releases</a> -
+  <a href="https://sombrero64.github.io/MiniScript/">Website</a> -
+  <a href="https://github.com/Sombrero64/MiniScript/blob/main/guide.pdf">Guide</a> -
+  <a href="https://discord.gg/BSe84YHgRx">Discord Server</a> )
+</p>
 
 **MiniScript** is a small and basic language, featuring 39 commands and basic list and procedure support. The sytnax is pretty basic:
 
