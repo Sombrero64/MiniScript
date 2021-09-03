@@ -7,10 +7,10 @@
 </div>
 
 <p align="center">
-  ( <a href="">Releases</a> -
-  <a href="">Documentation</a> -
-  <a href="https://discord.gg/BSe84YHgRx">Discord Server</a> - 
-	<a href="">License</a> )
+( <a href="https://github.com/Sombrero64/MiniScript/releases">Releases</a> -
+<a href="https://github.com/Sombrero64/MiniScript/blob/main/media/docs.pdf">Documentation</a> -
+<a href="https://discord.gg/BSe84YHgRx">Discord Server</a> - 
+<a href="https://github.com/Sombrero64/MiniScript/blob/main/LICENSE">License</a> )
 </p>
 
 <div align="center">
