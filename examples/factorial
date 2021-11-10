@@ -1,0 +1,11 @@
+var number 1
+var index 1
+var repeat true
+
+label loop
+	var index (+ $index 1)
+	var repeat (< $index 5)
+	var number (* $number $index)
+goto (? $repeat loop)
+
+print $number

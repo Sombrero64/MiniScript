@@ -1,0 +1,10 @@
+var number 0
+var break false
+label loop
+	var number (+ $number 1)
+	var break (! (= $number 100))
+	var fizz (= (% $number 3) 0)
+	var buzz (= (% $number 5) 0)
+	var output (join (? $fizz "Fizz" "") (? $buzz "Buzz" ""))
+	print (? (= $output "") $number $output)
+goto (? $break loop)

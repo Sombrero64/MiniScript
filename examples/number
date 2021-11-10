@@ -1,0 +1,32 @@
+def gameplay
+	var answer 0
+	var remaining 25
+	var number (round (rand 1 100))
+	
+	label loop
+		# ask user for number
+		print (join "Tries left: " $remaining)
+		var answer (round (ask))
+		var remaining (- $remaining 1)
+		
+		# evaluate remainder and guess
+		var victory (= $answer $number)
+		var noTries (= $remaining 0)
+		var repeat (! (~ $victory $noTries))
+		
+		# display hint
+		var output (? (> $answer $number) "Lower!" "Higher!")
+		print (? $repeat $output "")
+	goto (? $repeat loop)
+end
+
+label main
+	print "I am going to pick a random number between 1 to 100"
+	print "You got 25 tries to figure it out, good luck!"
+	gameplay
+	
+	var win (join "Bravo! You beat me with " (- 25 $remaining) " tries.")
+	var lose (join "Sorry, but that's it. My number was " $number " all along.")
+	print (? $victory $win $lose)
+	print ""
+goto main
