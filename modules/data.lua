@@ -3,7 +3,6 @@ local content = {
 	["data"] = {
 		["commands"] = {}, -- [name] = function(args)
 		["variables"] = {}, -- [name] = value
-		["lists"] = {}, -- [name] = {...}
 		["procedures"] = {}, -- [name] = {code, inputs name}
 		["labels"] = {} -- [name] = value
 	},
@@ -16,7 +15,9 @@ local content = {
 		-- procedure output
 		["report"] = "",
 		-- procedure break
-		["break"] = false
+		["break"] = false,
+		-- previous goto line
+		["prev goto"] = 0
 	},
 	-- interpreter info
 	["interpreter"] = {
@@ -27,15 +28,31 @@ local content = {
 
 local functions = require("modules/functions")
 local parser = require("modules/parser")
-local help = require("modules/help")
 
 local sub = string.sub
 local nilCheck = functions.nilCheck
 
 local calculate_operators = {
-	["absolute"] = math.abs, ["square"] = math.sqrt, ["log"] = math.log,
+	["abs"] = math.abs, ["sqrt"] = math.sqrt, ["log"] = math.log, ["pow"] = math.pow,
 	["sin"] = math.sin, ["cos"] = math.cos, ["tan"] = math.tan,
 	["asin"] = math.asin, ["acos"] = math.acos, ["atan"] = math.atan
+}
+
+local list_edit_commands = {
+	["add"] = function(list, x, y) -- (edit LIST add VALUE ~ INDEX)
+		local y = tonumber(y) or #list + 1
+		table.insert(list, y, x)
+		return list
+	end, ["del"] = function(list, x, y) -- (edit LIST del INDEX)
+		local x = tonumber(x) or #list
+		table.remove(list, x)
+		return list
+	end, ["set"] = function(list, x, y) -- (edit LIST set INDEX VALUE)
+		local x = tonumber(x) or #list
+		local y = y or ""
+		list[x] = y
+		return list
+	end
 }
 
 -- get and return program data, define it if not found
@@ -48,11 +65,6 @@ local function getDataType(typeName, name, default)
 		dtItem = dtTable[name]
 	end
 	return dtItem 
-end
-
--- get and return table, define it if not found
-function content.getList(name)
-	return getDataType("lists", name, {})
 end
 
 -- get and return procedure, define it if not found
@@ -83,6 +95,7 @@ local function combine(inputs, code)
 	return ""
 end
 
+-- compare each item and returns the result
 local function gate(inputs, code)
 	local ifNumbers = comparableAsNumbers(inputs)
 	local previous = inputs[1]
@@ -139,9 +152,9 @@ function content.runCommand(tokens)
 	if type(command) == "function" then -- command
 		local output = command(inputs)
 		return output
-	elseif type(command) == "table" then -- procedure (todo)
+	elseif type(command) == "table" then -- procedure
 		local code, name = command[1], command[2] or ""
-		content["data"]["lists"][name] = inputs
+		content["data"]["variables"][name] = functions.encode(inputs) or {}
 		
 		local previous = content["program"]["index"]
 		content["program"]["index"] = 0
@@ -169,36 +182,41 @@ function content.runCommand(tokens)
 	return nil
 end
 
--- runs each line in data.program.index
+-- runs a line
+function content.runLine(line)
+	local text = parser.cleanUpString(line)
+	if string.gsub(line, "%s+", "") ~= "" then
+		local tokens = parser.tokenizer(text)
+		local set = parser.generate(tokens)
+		return content.runCommand(set) or ""
+	end
+end
+
+-- runs each line in data.program.contents
 local function runContents()
 	content["program"]["index"] = 1
 	while content["program"]["index"] <= #content["program"]["contents"] do
 		local number = content["program"]["index"]
 		local line = content["program"]["contents"][number] or ""
-		local text = parser.cleanUpString(line)
-		if string.gsub(line, "%s+", "") ~= "" then
-			local tokens = parser.tokenizer(text)
-			local set = parser.generate(tokens)
-			content.runCommand(set)
-		end
+		content.runLine(line)
 		content["program"]["index"] = content["program"]["index"] + 1
 	end
 end
 
 -- additional input are ~, endless inputs are ..., option inputs are /, code blocks are ;
 content["data"]["commands"] = {
-	-- set NAME VALUE
-	["set"] = function(inputs)
+	-- var NAME VALUE
+	["var"] = function(inputs)
 		local name, value = inputs[1], inputs[2]
 		if nilCheck(name, value) then
 			content["data"]["variables"][name] = value
 		end
 	end,
 	
-	-- delete TYPE ~ NAME
-	["delete"] = function(inputs)
+	-- del TYPE ~ NAME
+	["del"] = function(inputs)
 		local typeEntry, name = inputs[1], inputs[2]
-		local types = {"variable", "list", "procedure", "label", "switch"}
+		local types = {"variable", "list", "label"}
 		if typeEntry ~= nil then
 			if typeEntry == "all" then
 				for _, value in ipairs(types) do
@@ -210,74 +228,53 @@ content["data"]["commands"] = {
 		end
 	end,
 	
-	-- list NAME ...
+	-- (list ...)
 	["list"] = function(inputs)
-		local name = inputs[1]
-		table.remove(inputs, 1)
-		if name ~= nil then
-			content["data"]["lists"][name] = inputs
+		return functions.encode(inputs)
+	end,
+	
+	-- (edit LIST TYPE X ~ Y)
+	["edit"] = function(inputs)
+		local list = inputs[1] or ""
+		local func = inputs[2] or ""
+		local x = inputs[3]
+		local y = inputs[4] or ""
+		
+		list = functions.decode(list)
+		func = list_edit_commands[func]
+		
+		if functions.nilCheck(list, func, x) then
+			list = func(list, x, y) or {}
+			return functions.encode(list)
 		end
 	end,
 	
-	-- insert LIST VALUE ~ INDEX
-	["insert"] = function(inputs)
-		local name, value = inputs[1], inputs[2]
-		if nilCheck(name, value) then
-			local list = content.getList(name)
-			local index = tonumber(inputs[3]) or #list + 1
-			table.insert(list, index, value)
-		end
-	end,
-	
-	-- remove LIST INDEX
-	["remove"] = function(inputs)
-		local name, index = inputs[1], tonumber(inputs[2])
-		if nilCheck(name, index) then
-			local list = content.getList(name)
-			table.remove(list, index)
-		end
-	end,
-	
-	-- replace LIST INDEX VALUE
-	["replace"] = function(inputs)
-		local name, index, value = inputs[1], tonumber(inputs[2]), inputs[3]
-		if nilCheck(name, index, value) then
-			local list = content.getList(name)
-			list[index] = value
-		end
-	end,
-	
-	-- (item LIST INDEX)
-	["item"] = function(inputs)
-		local name, index = inputs[1] or "", tonumber(inputs[2])
-		if nilCheck(name, index) then
-			local list = content.getList(name)
-			return list[index] or ""
-		end
+	-- (get LIST ~ INDEX)
+	["get"] = function(inputs)
+		local list = inputs[1] or ""
+		list = functions.decode(list)
+		local index = tonumber(inputs[2]) or #list
+		return list[index] or ""
 	end,
 	
 	-- (find LIST VALUE)
 	["find"] = function(inputs)
-		local name, value = inputs[1], inputs[2]
-		if nilCheck(name, value) then
-			local list = content.getList(name)
-			local output = functions.find(list, value)
-			return tostring(output) or "0"
-		end
+		local list = inputs[1] or ""
+		list = functions.decode(list)
+		local target = inputs[2] or ""
+		local index = functions.find(list, target) or 0
+		return tostring(index)
 	end,
 	
 	-- (size LIST)
 	["size"] = function(inputs)
-		local name = inputs[1]
-		if name ~= nil then
-			local list = content.getList(name)
-			local size = #list or 0
-			return tostring(size)
-		end
+		local list = inputs[1] or ""
+		list = functions.decode(list)
+		return tostring(#list)
 	end,
 	
-	-- (add ...)
-	["add"] = function(inputs)
+	-- (+ ...)
+	["+"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = tonumber(a) or 0
 			local b = tonumber(b) or 0
@@ -285,8 +282,8 @@ content["data"]["commands"] = {
 		end)
 	end,
 	
-	-- (subtract ...)
-	["subtract"] = function(inputs)
+	-- (- ...)
+	["-"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = tonumber(a) or 0
 			local b = tonumber(b) or 0
@@ -294,8 +291,8 @@ content["data"]["commands"] = {
 		end)
 	end,
 	
-	-- (multiply ...)
-	["multiply"] = function(inputs)
+	-- (* ...)
+	["*"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = tonumber(a) or 1
 			local b = tonumber(b) or 1
@@ -303,8 +300,8 @@ content["data"]["commands"] = {
 		end)
 	end,
 	
-	-- (divide ...)
-	["divide"] = function(inputs)
+	-- (/ ...)
+	["/"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = tonumber(a) or 1
 			local b = tonumber(b) or 1
@@ -312,8 +309,8 @@ content["data"]["commands"] = {
 		end)
 	end,
 	
-	-- (remainder ...)
-	["remainder"] = function(inputs)
+	-- (% ...)
+	["%"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = tonumber(a) or 1
 			local b = tonumber(b) or 1
@@ -345,8 +342,8 @@ content["data"]["commands"] = {
 		return tostring(output)
 	end,
 	
-	-- (random MIN MAX)
-	["random"] = function(inputs)
+	-- (rand MIN MAX)
+	["rand"] = function(inputs)
 		local min, max = tonumber(inputs[1]), tonumber(inputs[2])
 		if nilCheck(min, max) then
 			local output = functions.randomFloat(min, max)
@@ -354,17 +351,8 @@ content["data"]["commands"] = {
 		end
 	end,
 	
-	-- (power NUMBER REPEATER)
-	["power"] = function(inputs)
-		local number, repeater = tonumber(inputs[1]), tonumber(inputs[2])
-		if nilCheck(number, repeater) then
-			local output = math.pow(number, repeater)
-			return tostring(output) or "0"
-		end
-	end,
-	
-	-- (calculate operator X ~ Y)
-	["calculate"] = function(inputs)
+	-- (math operator X ~ Y)
+	["math"] = function(inputs)
 		local name = inputs[1]
 		local x = tonumber(inputs[2])
 		local y = tonumber(inputs[3])
@@ -379,8 +367,8 @@ content["data"]["commands"] = {
 		end
 	end,
 	
-	-- (length STRING)
-	["length"] = function(inputs)
+	-- (len STRING)
+	["len"] = function(inputs)
 		local text = inputs[1] or ""
 		return tostring(#text)
 	end,
@@ -394,26 +382,26 @@ content["data"]["commands"] = {
 		end
 	end,
 	
-	-- (lower STRING)
-	["lower"] = function(inputs)
+	-- (low STRING)
+	["low"] = function(inputs)
 		local text = inputs[1] or ""
 		return string.lower(text)
 	end,
 	
-	-- (upper STRING)
-	["upper"] = function(inputs)
+	-- (up STRING)
+	["up"] = function(inputs)
 		local text = inputs[1] or ""
 		return string.upper(text)
 	end,
 	
-	-- (not BOOLEAN)
-	["not"] = function(inputs)
+	-- (! BOOLEAN)
+	["!"] = function(inputs)
 		local truth = inputs[1] or "false"
 		return tostring(truth == "false")
 	end,
 	
-	-- (all ...)
-	["all"] = function(inputs)
+	-- (& ...)
+	["&"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = a == "true"
 			local b = b == "true"
@@ -421,8 +409,8 @@ content["data"]["commands"] = {
 		end)
 	end,
 	
-	-- (any ...)
-	["any"] = function(inputs)
+	-- (~ ...)
+	["~"] = function(inputs)
 		return combine(inputs, function(a, b)
 			local a = a == "true"
 			local b = b == "true"
@@ -430,30 +418,42 @@ content["data"]["commands"] = {
 		end)
 	end,
 	
-	-- (equal ...)
-	["equal"] = function(inputs)
+	-- (= ...)
+	["="] = function(inputs)
 		return gate(inputs, function(a, b)
 			return a == b
 		end)
 	end,
 	
-	-- (order ...)
-	["order"] = function(inputs)
+	-- (> ...)
+	[">"] = function(inputs)
 		return gate(inputs, function(a, b)
 			return a > b
 		end)
 	end,
 	
-	-- (check BOOLEAN IF ELSE)
-	["check"] = function(inputs)
+	-- (< ...)
+	["<"] = function(inputs)
+		return gate(inputs, function(a, b)
+			return a < b
+		end)
+	end,
+	
+	-- (? VALUE IF ~ ELSE ~ OTHER)
+	["?"] = function(inputs)
 		local truth = inputs[1]
 		local whenTrue = inputs[2] or ""
 		local whenFalse = inputs[3] or ""
+		local whenOther = inputs[4] or ""
 		
 		if truth ~= nil then
-			local state = truth == "true"
-			local value = state and whenTrue or whenFalse
-			return value
+			if truth == "true" then
+				return whenTrue
+			elseif truth == "false" then
+				return whenFalse
+			else
+				return whenOther
+			end
 		end
 	end,
 	
@@ -482,12 +482,18 @@ content["data"]["commands"] = {
 		local line = tonumber(input) or content["data"]["labels"][input]
 		
 		if line ~= nil then
+			content["program"]["prev goto"] = content["program"]["index"]
 			content["program"]["index"] = line - 1
 		end
 	end,
 	
-	-- define NAME ~ INPUTS
-	["define"] = function(inputs)
+	-- back
+	["back"] = function()
+		content["program"]["index"] = content["program"]["prev goto"]
+	end,
+	
+	-- def NAME ~ INPUTS
+	["def"] = function(inputs)
 		local name = inputs[1]
 		if name ~= nil then
 			local program = content["program"]
@@ -518,6 +524,71 @@ content["data"]["commands"] = {
 		content["program"]["break"] = true
 	end,
 	
+	-- if BOOLEAN LINE ...
+	["if"] = function(inputs)
+		table.insert(inputs, 1, "if")
+		local values = {}
+
+		local elseIndex = -1
+		for index, item in ipairs(inputs) do
+			if elseIndex == -1 then
+				table.insert(values, item)
+			end
+			if item == "else" and index % 2 ~= 0 then
+				table.insert(values, inputs[index + 1])
+				elseIndex = index
+				break
+			end
+		end
+		if elseIndex > -1 then
+			values[elseIndex] = "true"
+			table.insert(values, elseIndex, "if")
+		end
+
+		local value = ""
+		for i = 1, #values / 3 do
+			local truth = values[(i - 1) * 3 + 2]
+			if truth == "true" then
+				value = values[(i - 1) * 3 + 3]
+				break
+			end
+		end
+
+		local text = parser.cleanUpString(value)
+		if string.gsub(text, "%s+", "") ~= "" then
+			local tokens = parser.tokenizer(text)
+			local set = parser.generate(tokens)
+			local output = content.runCommand(set)
+			return output or ""
+		end
+	end,
+
+	-- loop REPEATER LINE
+	["loop"] = function(inputs)
+		local repeater = inputs[1] or ""
+		local line = inputs[2] or ""
+		if repeater == "true" then
+			while true do
+				content.runLine(line)
+			end
+		else
+			repeater = tonumber(repeater) or 1
+			for _ = 1, repeater do
+				content.runLine(line)
+			end
+		end
+	end,
+	
+	-- while NAME LINE
+	["while"] = function(inputs)
+		local variables = content["data"]["variables"]
+		local name = inputs[1] or ""
+		local line = inputs[2] or ""
+		while variables[name] == "true" do
+			content.runLine(line)
+		end
+	end,
+	
 	-- run ~ PATH
 	["run"] = function(inputs)
 		local path = inputs[1] or content["interpreter"]["filepath"]
@@ -528,43 +599,17 @@ content["data"]["commands"] = {
 			runContents()
 		end
 	end,
-	
-	-- help ~ COMMAND
-	["help"] = function(inputs)
-		local name = inputs[1]
-		if name == nil then
-			local index = 1
-			for name, _ in pairs(help) do
-				print(index, name)
-				index = index + 1
-			end
-		elseif content["data"]["commands"][name] ~= nil then
-			local contents = help[name] or {"", {}, "", ""}
-			local name = {"", "== " .. name .. " ==", contents[1]}
-			local info = {"", contents[3], "", contents[4], ""}
-			
-			for _, item in ipairs(name) do
-				print(item)
-			end
-			
-			for name, info in pairs(contents[2]) do
-				print(name .. ": " .. info)
-			end
-			
-			for _, item in ipairs(info) do
-				print(item)
-			end
-		end
-	end,
 
 	-- about
 	["about"] = function()
 		local license = functions.readFile("LICENSE") or {}
 		license = #license == 0 and {"license file missing"} or license
-		local info = [[MiniScript Version 2.0
-Written in Lua 5.1.5 with ZeroBrane Studio and Notepad++
-Designed and Programmed by Daniel Lawson
-Licensed under the MIT License
+		local info = [[Written in Lua with ZeroBrane Studio and Notepad++.
+Designed and Programmed by Daniel Lawson.
+
+Licensed under the MIT License.
+Examples are completely free of charage.
+Copyright 2021 Daniel Lawson
 
 github.com/Sombrero64/MiniScript
 www.lua.org
@@ -572,7 +617,7 @@ studio.zerobrane.com
 notepad-plus-plus.org]]
 		
 		print("")
-		print("=== MiniScript ===")
+		print("=== About MiniScript 2.1 ===")
 		print(info)
 		print("------------------")
 		for _, line in ipairs(license) do
