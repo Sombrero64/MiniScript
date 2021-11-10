@@ -1,0 +1,76 @@
+== Version 2.1 (11/?/2021) ==
+Introduced 6 new commands with 8 updated commands.
+Made lists encodable as strings, allowing for first class lists and sublists.
+Removed help.lua, use the new reference manual (docs/help.txt).
+Renamed many commands to shorter variations.
+
+* renamed 20 commands, view reference manual
+* added <, back, edit, 
+* updated var, del, list, get, find, size, math, ?, def
+* removed power, help
+* added functions.decode() and functions.encode() in functions.lua
+* added content.runLine() in data.lua
+* removed help.lua
+
+== Version 2.0 (9/3/2021) ==
+Introduces 5 new commands with 26 updated commands.
+Various syntax and interpreter improvements.
+Commands and procedures can now output values.
+Procedures can be called as commands (commands are checked first).
+Removal of whitespace and commands improved.
+
+* source code rewritten
+* commands and procedures can output values
+* procedures can be called as commands, commands are checked first then procedures
+* lists and procedures are automatically defined when needed
+* whitespace is removed from the left, so spaces can be used on the left, and tabs as entries
+* added power, calculate, lower, upper, exit
+* removed change, absolute, goif, reset, parse, call, if
+* updated set, delete, equal, order, goto, check, about, help, run
+* updated item, find, size, add, subtract, multiply, divide, remainder, join, round, random, length, sub, not, any, all, check, ask to report values only
+
+== Version 1.4 (8/17/2021) ==
+Introduces 1 new command with 2 updated commands.
+Few bug and string fixes.
+Tabs can be used to organize code, removed during parsing.
+
+* tabs are removed while parsing
+* added change
+* updated call, define
+* corrected typo bewteen to between (edited strings and renamed bewteen)
+* fixed bug: goto and goif cannot work when being used in procedures
+
+== Version 1.3 (8/17/2021) ==
+Few fixes with a free and short documentation.
+
+* renamed remainer to remainder (fixed typo)
+* updated order
+* removed step
+* removed functions.isInteger(), functions.interpreterCommand(), functions.askUser()
+
+== Version 1.2 (8/16/2021) ==
+Introduces 1 new command with 11 updated commands.
+Labels are added to be used with goto and goif.
+Apostrophes can be used to create strings with spaces.
+
+* updated parser: string management
+* added labels (data type)
+* added label
+* updated add, subtract, multiply, divide, remainer, join, any, all, goto, goif, reset
+* patched bug: combine (add, subtract, etc.) operators now starts at the first item only (patches that subtracting starts at zero)
+* patched bug: procedures are not cleared with the reset command is called
+
+== Version 1.1 (8/15/2021) ==
+Introduces 9 new commands with 6 updated commands.
+Procedures are added, which stores code and inputs.
+
+* added procedures (data type)
+* data will no longer be resetted, use the reset command if necessary
+* commands in the interpreter instead of reading scripts, use the run command if needed
+* variable calls can be used on command names now
+* added step, about, help, run, reset, parse, define, call, if
+* updated delete, add, subtract, multiply, divide
+* removed delist
+
+== Version 1.0 (8/15/2021) ==
+The first public version with the original 31 commands.
