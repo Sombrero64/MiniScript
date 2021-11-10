@@ -1,0 +1,364 @@
+== MiniScript Reference Manual ==
+MiniScript is a basic and simple scripting language programmed in Lua. Everything is made up of commands, which does something with its inputs and may output something, which in turn be used as another command's input.
+
+= Contents =
+miniscript.lua - main program
+LICENSE - source code license
+
+modules - essential modules
+	functions.lua - common functions
+	parser.lua - string parser
+	data.lua - contains program data, commands are created here
+docs
+	docs.pdf - documentation
+	help.txt - reference manual
+	updates.txt - list of updates
+examples
+	hello - hello, world
+	fizzbuzz - fizz buzz loop
+	factorial - structural factorial
+	number - number guessing game
+
+= Interpreter =
+Set the root folder to the installation of MiniScript, and run miniscript.lua. You can input commands in the console, and it would respond back. If you use a command that outputs a value, the console prints out the command's value. Use the run command to run the contents of a file.
+
+= Syntax and Semantics =
+1. Entries or strings are separated by spaces. Using quotes or apostrophes prevents this, so you can use spaces in one entry. When doing this, you must use the respective character to close the string. The first entry is the name of a command, and the rest are inputs or arguments.
+
+2. To write another command as an input, you use parentheses around that command. All entries to a command must be in the same line, including command inputs and their parentheses.
+
+3. Variables stores a name and a string value. To call a variable, use the dollar sign followed the name like $name. You can name a variable with multiple spaces and use quotes to call it, but the dollar sign must be at the beginning of the entry to call a variable.
+
+4. Comments uses the number sign or hash (#), and it can be either place on one line or at the end of a line. Hashes cannot be used within quotes, and there’s no way to close a comment in a line.
+
+5. Procedures collects code between the command to end. Procedures cannot recognize which end it is theirs, so it’s impossible to define a procedure within a procedure. Same case in the interpreter’s console, because how it handles commands differently compared to the interpreter itself.
+
+6. Whitespace (spaces and tabs) from the left and comments to the right are removed while parsing.
+
+= Data Types =
+1. Variables stores a name and a string value, which can be a number, Boolean (true/false), or list. To call a variable, use a dollar sign ($) followed with the name (i.e. $name).
+
+2. Procedures stores code with a name for itself and a variable. You can call a procedure like a command, and the inputs are stored in said variable as a list.
+
+3. Labels stores a number value, which is used with goto.
+
+= Commands =
+var NAME ~ VALUE
+	NAME: Variable Name
+	VALUE: Strings Value
+	
+	sets the value of a variable (NAME) to VALUE.
+	without VALUE, variable is set to "".
+
+	set foo 42
+	set bar "abc"
+	
+del TYPE ~ NAME
+	TYPE: Data Type (variable, procedure, label, all)
+	VALUE: Entry Name
+	
+	deletes an entry (NAME) of TYPE.
+	if TYPE is "all", clear all user defined program data.
+	
+	var foo 42
+	del variable foo
+	
+(list ...)
+	...: Items
+	
+	defines a list (string).
+	
+	var fruits (list apples bananas oranges)
+	
+(edit LIST TYPE X ~ Y)
+	LIST: List
+	TYPE: Item Operator (add, del, set)
+	X: Value 1
+	Y: Value 2
+	
+	edits LIST by adding, deleting, or editing the value of an item (TYPE, X, Y), then returns the result.
+	add: inserts X at Y (or the end of the list without Y).
+	del: deletes the item at X.
+	set: sets the value of item at X to Y.
+	
+	var fruits (edit $fruits add grapes)
+	var fruits (edit $fruits del 1)
+	var fruits (edit $fruits set 1 pineapples)
+	
+(get LIST ~ INDEX)
+	LIST: List
+	INDEX: Item Index
+	
+	returns the value of an item from LIST at INDEX.
+	without INDEX, return the last item from LIST.
+	
+	print (get $fruits 1)
+	print (get $fruits)
+	
+(find LIST VALUE)
+	LIST: List
+	VALUE: Target Value
+	
+	returns the first item's index from LIST that equals to VALUE.
+	returns 0 if not found.
+	
+	print (find $fruits "oranges")
+	
+(size LIST)
+	LIST: List
+	
+	returns the size (amount of items) of LIST.
+	
+	print (size $fruits)
+	
+(+ ...), (- ...), (* ...), (/ ...)
+	...: Numbers
+	
+	adds, subtracts, multiplies, or divides all numbers (...) in order.
+	
+	print (+ 2 2)
+	print (- 4 2)
+	print (* 2 2)
+	print (/ 4 2)
+	
+(% ...)
+	...: Numbers
+	
+	divides all numbers (...) in order, and returns the remainder.
+	
+	print (% 6 4)
+	print (= (% 6 3) 0)
+	
+(join ...)
+	...: Strings
+	
+	joins (concatenates) all strings (...) in order.
+	
+	print (join "vanilla " "crazy " "cake")
+	
+(round NUMBER ~ FORCE)
+	NUMBER: Number
+	FORCE: Rounding Force (up, down)
+	
+	rounds NUMBER to the nearest integer.
+	with FORCE, round the NUMBER only up (FORCE = "up") or down (FORCE = "down").
+	
+	print (round 6.5)
+	print (round 6.4 up)
+	print (round 6.7 down)
+	
+(rand MIN MAX)
+	MIN: Minimum
+	MAX: Maximum
+	
+	returns a random number between MIN and MAX.
+	
+	print (rand 1 10)
+	print (round (rand 1 100))
+	
+(math OPERATOR X ~ Y)
+	OPERATOR: Operator (abs, sqrt, log, pow, sin, cos, tan, asin, acos, atan)
+	X: Number 1
+	Y: Number 2
+	
+	calculates X and Y with OPERATOR.
+	log uses both X and Y, Y is 1 by default.
+	
+	print (math absolute -5)
+	print (math log 5)
+	
+(len STRING)
+	STRING: String
+	
+	returns the length (amount of characters) of STRING.
+	
+	print (len "fluffy cake")
+	
+(sub STRING START ~ END)
+	STRING: String
+	START: Start Index / Character Index
+	END: End Index
+	
+	returns a section of STRING between indexs of START and END.
+	without END, get character at START.
+	
+	print (sub "fast fox" 6 8)
+	
+(low STRING), (up STRING)
+	STRING: String
+	
+	changes the capitalization of every character in String
+	low: lowercase
+	up: uppercase
+	
+	print (low "This IS A test")
+	print (up "This IS A test")
+	
+(! BOOLEAN)
+	BOOLEAN: Boolean Value
+	
+	returns the opposite of BOOLEAN
+	true to false, and vice versa
+	
+	print (not false)
+	print (not true)
+	
+(& ...), (~ ...)
+	...: Booleans
+	
+	returns true depending on the number of Booleans that are "true"
+	AND (&): all Booleans true
+	OR (~): atleast one Boolean true
+	
+	print (all true true)
+	print (any true true false)
+	
+(= ...)
+	...: Strings
+	
+	returns true if all strings are equals
+	if all strings can be converted into numbers, then evaluate as numbers
+	
+	print (= "fox", "fox"),
+	print (= 6.0 "6")
+	
+(> ...), (< ...)
+	...: Strings
+	
+	returns true if all strings are correctly ordered from greatest to least (>) or least to greatest (<)
+	if all strings can be converted into numbers, then evaluate as numbers
+	
+	print (> 16 12.3 9.6 6.5)
+	print (< 4.2 7 13.76 20)
+	
+(? VALUE IF ~ ELSE ~ OTHER)
+	VALUE: String
+	IF: Value if "true"
+	ELSE: Value if "false"
+	OTHER: Value if not "true" or "false"
+	
+	returns IF, ELSE, or OTHER depending on the value of STRING
+	IF if "true", ELSE if "false", and OTHER if not "true" or "false"
+	
+	print (? false "on" "off" "???")
+	print (? true "on" "off" "???")
+	print (? fish "on" "off" "???")
+	
+print ...
+	...: Strings
+	
+	outputs the strings to the console
+	
+	print "Hello, world!"
+	
+(ask)
+	asks the user for some text and returns it as a string
+	
+	print "What's your name?"
+	var name (ask)
+	var name (? (= $name "") "you" $name)
+	print (join "Hello, " $name "!")
+	
+goto LINE
+	LINE: Line Number / Label Name
+	
+	goes to LINE (as number or label)
+	line numbers are changed to 1 while calling a procedure
+	
+	print home
+	print sweet
+	goto 1
+	
+label NAME ~ LINE
+	NAME: Label Name
+	LINE: Line Number
+	
+	defines a goto label (NAME) at the current line number or LINE
+	
+	label loop
+		print home
+		print sweet
+	goto loop
+	
+back
+	returns back to the previous recorded line number
+	
+	goto 4
+		print foo
+		back
+	print bar
+	goto 2
+	print moo
+	
+def NAME ~ INPUTS
+	NAME: Procedure Name
+	INPUTS: Procedure Inputs (Variable Name)
+	
+	defines a procedure (NAME) and collects code between it and "end"
+	when called with inputs, INPUTS is set to a list containing the inputs
+	one procedure can be defined at a time
+	
+	def foo
+		print "foo"
+	end
+	
+	foo
+	
+exit ~ VALUE
+	VALUE: Procedure Output
+	
+	stops procedure call and returns back to program level
+	VALUE is procedure output
+	
+	def root rootInputs
+		var number (get $rootInputs 1)
+		exit (* $number $number)
+	end
+	
+	print (root 4)
+	
+if BOOLEAN LINE ...
+	if is a branching command with "if" and "else"
+	to run a statement if the previous ones are false, write another IF
+	to run a statement if all IFs where false, write an ELSE
+	
+	if true "print A"
+	if true "print A" else "print B"
+	if true "print A" if true "print B"
+	if true "print A" if true "print B" else "print C"
+	
+loop REPEATER LINE
+	REPEATER: Loop This Many
+	LINE: Line
+	
+	loops LINE by REPEATER times
+	if REPEATER is true, then repeat LINE forever
+	
+	loop 10 "print hello"
+	
+while VARIABLE LINE
+	VARIABLE: Variable Name
+	LINE: Line
+	
+	loops LINE while the value of VARIABLE is true
+	
+	var variable true
+	def looping
+		var variable (< (round (rand 1 10)) 10)
+		print "hello"
+	end
+	while variable looping
+	
+run ~ PATH
+	PATH: File Path
+	
+	imports the contents of the file at PATH and runs it in order
+	without PATH, run the previous path
+	PATH starts at root folder
+	
+	run hello
+	
+about
+	displays information on miniscript
+	
+	about
