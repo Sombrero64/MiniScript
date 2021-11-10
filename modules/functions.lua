@@ -10,7 +10,7 @@ function functions.find(table, target)
 	return nil
 end
 
--- managable functions.find()
+-- managable functions.find() for detecting if TABLE contains TARGET
 function functions.contains(table, target)
 	return functions.find(table, target) ~= nil
 end
@@ -69,12 +69,60 @@ function functions.printTable(arr, indentLevel)
 
     for index, value in pairs(arr) do
         if type(value) == "table" then
-            str = str .. indentStr .. tostring(index) .. ": " .. tostring(value) .. "\n" .. pT(value, (indentLevel + 1))
+            str = str .. indentStr .. tostring(index) .. " table: " .. tostring(value) .. "\n" .. pT(value, (indentLevel + 1))
         else
-			str = str .. indentStr .. tostring(index) .. ": " .. tostring(value) .. "\n"
+			str = str .. indentStr .. tostring(index) .. " " .. type(value) .. ": " .. tostring(value) .. "\n"
         end
     end
     return str
+end
+
+-- decode string to one layer list
+function functions.decode(str)
+	local str = str or ""
+	local value = ""
+	local zone = 0
+	local list = {}
+	
+	-- create items
+	for i = 1, #str do
+		local letter = string.sub(str, i, i)
+		
+		-- change zone
+		if letter == "[" then
+			zone = zone + 1
+		elseif letter == "]" then
+			zone = zone - 1
+		end
+		
+		-- add item to list if zone fin
+		if zone == 0 then
+			table.insert(list, #list + 1, value)
+			value = ""
+		end
+		
+		-- join letter with value
+		if zone > 0 then
+			value = value .. letter
+		end
+	end
+	
+	-- remove first letter
+	for index, item in pairs(list) do
+		list[index] = string.sub(list[index], 2)
+	end
+	
+	return list
+end
+
+-- encode list to string
+function functions.encode(list)
+	local output = ""
+	for _, item in ipairs(list) do
+		local str = "[" .. item .. "]"
+		output = output .. str
+	end
+	return output
 end
 
 return functions
