@@ -1,14 +1,14 @@
 <div align="center">
-        <img width="500" src="media/logo.png" alt="MiniScript">
+        <img width="500" src="media/logo2.png" alt="MiniScript">
 </div>
 
 <div align="center">
-        MiniScript - Version 2.0
+        MiniScript - Version 2.1
 </div>
 
 <p align="center">
 ( <a href="https://github.com/Sombrero64/MiniScript/releases">Releases</a> -
-<a href="https://github.com/Sombrero64/MiniScript/blob/main/media/docs.pdf">Documentation</a> -
+<a href="https://github.com/Sombrero64/MiniScript/blob/main/docs/docs.pdf">Documentation</a> -
 <a href="https://discord.gg/BSe84YHgRx">Discord Server</a> - 
 <a href="https://github.com/Sombrero64/MiniScript/blob/main/LICENSE">License</a> )
 </p>
@@ -19,19 +19,33 @@
 
 </div>
 
-**MiniScript** is a basic and simple scripting language written in [Lua](https://www.lua.org/), which features 38 commands and basic list and procedure support. Every behavior is made up of commands, which does something with its inputs and may output something, which in turn be used as another command's input.
+**MiniScript** is a basic and simple scripting language written in [Lua](https://www.lua.org/), which features 39 commands and list and procedure support. Every behavior is made up of commands, which does something with its inputs and may output something, which in turn be used as another command's input.
 
 ```
-set number 0
-set break false
+var number 0
+var break false
 label loop
-	set number (add $number 1)
-	set break (not (equal $number 100))
-	set fizz (equal (remainder $number 3) 0)
-	set buzz (equal (remainder $number 5) 0)
-	set output (join (check $fizz "Fizz" "") (check $buzz "Buzz" ""))
-	print (check (equal $output "") $number $output)
-goto (check $break loop)
+	var number (+ $number 1)
+	var break (! (= $number 100))
+	var fizz (= (% $number 3) 0)
+	var buzz (= (% $number 5) 0)
+	var output (join (? $fizz "Fizz" "") (? $buzz "Buzz" ""))
+	print (? (= $output "") $number $output)
+goto (? $break loop)
+```
+
+```
+var number 1
+var index 1
+var repeat true
+
+label loop
+	var index (+ $index 1)
+	var repeat (< $index 5)
+	var number (* $number $index)
+goto (? $repeat loop)
+
+print $number
 ```
 
 <div align="center">
@@ -70,7 +84,7 @@ Same case in the interpreter’s console, because how it handles commands differ
 
 </div>
 
-Ever scene I started programming, I wanted to create my own programming language with the features and syntax I wanted.
+Ever since I started programming, I wanted to create my own programming language with the features and syntax I wanted.
 Unfortunately, around that time, I didn’t have the knowledge to design and write an interpreter for any language, let alone a complex one.
 The only thing I can do related to designing programming languages is to create the appearance and functions of one.
 
