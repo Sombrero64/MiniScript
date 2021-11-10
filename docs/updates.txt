@@ -1,4 +1,4 @@
-== Version 2.1 (11/?/2021) ==
+== Version 2.1 (11/9/2021) ==
 Introduced 6 new commands with 8 updated commands.
 Made lists encodable as strings, allowing for first class lists and sublists.
 Removed help.lua, use the new reference manual (docs/help.txt).
